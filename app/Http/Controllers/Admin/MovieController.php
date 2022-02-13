@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Actor;
 use App\Models\Genre;
 use App\Models\Movie;
 use Illuminate\Http\Request;
@@ -22,13 +23,16 @@ class MovieController extends Controller
     public function index()
     {
         $genres = Genre::all();
-        return view('admin.movies.index',compact('genres'));
+        $actors = Actor::limit(10)->get();
+        return view('admin.movies.index',compact('genres','actors'));
 
     }// end of index
 
     public function data()
     {
-        $movies = Movie::WhenGenreId(request()->genre_id)->with(['genres']);
+
+        $movies = Movie::WhenGenreId(request()->genre_id)
+            ->WhenActorId(request()->actor_id)->with(['genres']);
 
         return DataTables::of($movies)
             ->addColumn('record_select', 'admin.movies.data_table.record_select')

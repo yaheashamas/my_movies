@@ -101,9 +101,9 @@
             columns: [
                 {data: 'record_select', name: 'record_select', searchable: false, sortable: false, width: '1%'},
                 {data: 'name', name: 'name'},
-                {data: 'movies_count', name: 'movies_count',searchable: false},
+                {data: 'movies_count', name: 'movies_count',searchable: false,sortable: false},
                 {data: 'relatedMovies', name: 'relatedMovies',searchable: false,sortable: false},
-                {data: 'created_at', name: 'created_at', searchable: false},
+                {data: 'created_at', name: 'created_at', searchable: false,sortable: false},
                 {data: 'actions', name: 'actions', searchable: false, sortable: false, width: '20%'},
             ],
             order: [[2, 'desc']],

@@ -2,10 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Actor;
 use App\Models\Genre;
 use App\Models\Movie;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use PhpParser\Node\Stmt\DeclareDeclare;
 
 class getMovies extends Command
 {
@@ -50,26 +52,63 @@ class getMovies extends Command
 
             foreach ($response->json()['results'] as $result){
 
-                $movie = Movie::create([
-                    'title' => $result['title'],
-                    'e_id' => $result['id'],
-                    'description' => $result['overview'],
-                    'poster' => $result['poster_path'],
-                    'banner' => $result['backdrop_path'],
-                    'release_date' => $result['release_date'],
-                    'vote' => $result['vote_average'],
-                    'vote_count' => $result['vote_count']
-                ]);
+                $movie = Movie::updateOrCreate(
+                    [
+                        'e_id' => $result['id'],
+                        'title' => $result['title']
+                    ],
+                    [
+                        'description' => $result['overview'],
+                        'poster' => $result['poster_path'],
+                        'banner' => $result['backdrop_path'],
+                        'release_date' => $result['release_date'],
+                        'vote' => $result['vote_average'],
+                        'vote_count' => $result['vote_count']
+                    ]);
 
-                foreach ($result['genre_ids'] as $genre_id){
-                    $genre = Genre::where('e_id',$genre_id)->first();
-                    $movie->genres()->attach($genre->id);
-
-                }//end of foreach genres
+                $this->attachGenre($result,$movie);
+                $this->attachActores($movie);
 
             }//end of foreach movies
 
         }//end of loop
 
     }//end of getPopularMovies
-}
+
+    private function attachGenre($result,$movie){
+
+        foreach ($result['genre_ids'] as $genre_id){
+            $genre = Genre::where('e_id',$genre_id)->first();
+            $movie->genres()->syncWithoutDetaching($genre->id);
+
+        }//end of foreach genres
+
+    }//get or attachGenres
+
+    protected function attachActores($movie){
+
+        $response = Http::get(config('services.tmdb.base_url').'movie/'.$movie->e_id.'/credits?api_key='.config('services.tmdb.api_key'));
+
+        foreach ($response->json()['cast'] as $index => $cast){
+
+            //move to next loop
+            if ( $cast['known_for_department'] != 'Acting') continue ;
+
+            //break loop
+            if ($index == 12) break;
+
+            $actor = Actor::updateOrCreate(
+                [
+                    'e_id' => $cast['id'],
+                    'name' => $cast['name'],
+                ],
+                [
+                    'image' => $cast['profile_path'],
+                ]);
+            $movie->actors()->syncWithoutDetaching($actor->id);
+
+        }//end of foreach
+
+    }//end of getActors
+
+}//end of get:movies

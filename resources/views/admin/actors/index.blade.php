@@ -3,12 +3,12 @@
 @section('content')
 
     <div>
-        <h2>@lang('movies.movies')</h2>
+        <h2>@lang('actors.actors')</h2>
     </div>
 
     <ul class="breadcrumb mt-2">
         <li class="breadcrumb-item"><a href="{{ route('admin.home') }}">@lang('site.home')</a></li>
-        <li class="breadcrumb-item">@lang('movies.movies')</li>
+        <li class="breadcrumb-item">@lang('actors.actors')</li>
     </ul>
 
     <div class="row">
@@ -21,8 +21,8 @@
 
                     <div class="col-md-12">
 
-                        @if (auth()->user()->hasPermission('delete_movies'))
-                            <form method="post" action="{{ route('admin.movies.bulk_delete') }}" style="display: inline-block;">
+                        @if (auth()->user()->hasPermission('delete_actors'))
+                            <form method="post" action="{{ route('admin.actors.bulk_delete') }}" style="display: inline-block;">
                                 @csrf
                                 @method('delete')
                                 <input type="hidden" name="record_ids" id="record-ids">
@@ -42,25 +42,15 @@
                         </div>
                     </div>
 
-                    {{--select genre--}}
-                    <div class="col-md-6">
-                        <select class="form-select" id="genre" aria-label="Default select example" >
-                            <option value="">@lang('site.all') @lang('genres.genres')</option>
-                            @foreach($genres as $genre)
-                                <option value="{{$genre->id}}" {{ request()->genre_id == $genre->id ? "selected" : ""}}>{{$genre->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    {{--search actors--}}
-                    <div class="col-md-6">
-                        <select class="form-select" id="actor" aria-label="Default select example" >
-                            <option value="">@lang('site.all') @lang('actors.actors')</option>
-                            @foreach($actors as $actor)
-                                <option value="{{$actor->id}}" {{ request()->actor_id == $actor->id ? "selected" : ""}}>{{$actor->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
+{{--                    --}}{{--select genre--}}
+{{--                    <div class="col-md-6">--}}
+{{--                        <select class="form-select" id="genre" aria-label="Default select example" >--}}
+{{--                            <option value="">@lang('site.all') @lang('genres.genres')</option>--}}
+{{--                            @foreach($genres as $genre)--}}
+{{--                                <option value="{{$genre->id}}" {{ request()->genre_id == $genre->id ? "selected" : ""}}>{{$genre->name}}</option>--}}
+{{--                            @endforeach--}}
+{{--                        </select>--}}
+{{--                    </div>--}}
 
                 </div><!-- end of row -->
 
@@ -70,7 +60,7 @@
 
                         <div class="table-responsive">
 
-                            <table class="table datatable" id="movies-table" style="width: 100%;">
+                            <table class="table datatable" id="actors-table" style="width: 100%;">
                                 <thead>
                                 <tr>
                                     <th>
@@ -81,11 +71,10 @@
                                             </label>
                                         </div>
                                     </th>
-                                    <th>@lang('movies.image')</th>
-                                    <th>@lang('movies.title')</th>
-                                    <th>@lang('movies.genres')</th>
-                                    <th>@lang('movies.vote')</th>
-                                    <th>@lang('movies.vote_count')</th>
+                                    <th>@lang('actors.image')</th>
+                                    <th>@lang('actors.name')</th>
+                                    <th>@lang('actors.movies_count')</th>
+                                    <th>@lang('movies.movies')</th>
                                     <th>@lang('site.action')</th>
                                 </tr>
                                 </thead>
@@ -109,9 +98,8 @@
 
     <script>
         let genre = "{{ request()->genre_id }}";
-        let actor = "{{request()->actor_id}}";
 
-        let moviesTable = $('#movies-table').DataTable({
+        let actorsTable = $('#actors-table').DataTable({
             dom: "tiplr",
             serverSide: true,
             processing: true,
@@ -119,22 +107,20 @@
                 "url": "{{ asset('admin_assets/datatable-lang/' . app()->getLocale() . '.json') }}"
             },
             ajax: {
-                url: '{{ route('admin.movies.data') }}',
+                url: '{{ route('admin.actors.data') }}',
                 data: function (d){
                     d.genre_id = genre;
-                    d.actor_id = actor;
-                }
+                },
             },
             columns: [
                 {data: 'record_select', name: 'record_select', searchable: false, sortable: false, width: '1%'},
-                {data: 'poster', name: 'poster',searchable: false,sortable: false,width: '10%'},
-                {data: 'title', name: 'title',width: '15%'},
-                {data: 'genres', name: 'genres',searchable: false,sortable: false},
-                {data: 'vote', name: 'vote',searchable: false,},
-                {data: 'vote_count', name: 'vote_count',searchable: false,sortable: false},
+                {data: 'image', name: 'image',searchable: false,sortable: false,width: '10%'},
+                {data: 'name', name: 'name',width: '15%'},
+                {data: 'movies_count', name: 'movies_count',searchable: false,sortable: false},
+                {data: 'my_movies', name: 'my_movies',searchable: false,sortable: false},
                 {data: 'actions', name: 'actions', searchable: false, sortable: false},
             ],
-            order: [[2, 'desc']],
+            order: [[3, 'desc']],
             drawCallback: function (settings) {
                 $('.record__select').prop('checked', false);
                 $('#record__select-all').prop('checked', false);
@@ -145,36 +131,13 @@
         //select type genre
         $('#genre').on('change',function(){
             genre = this.value;
-            moviesTable.ajax.reload();
+            actorsTable.ajax.reload();
         })
 
         //search
         $('#data-table-search').keyup(function () {
-            moviesTable.search(this.value).draw();
+            actorsTable.search(this.value).draw();
         })
-
-        //search about actors
-        $('#actor').on('change',function(){
-            actor = this.value;
-            moviesTable.ajax.reload();
-        })
-
-        $('#actor').select2({
-            ajax: {
-                url: '{{route('admin.actors.index')}}',
-                dataType : 'json',
-                data: function (params) {
-                    return {
-                        search: params.term,
-                    }
-                },
-                processResults : function (data){
-                    return{
-                        results : data
-                    }
-                }
-            }
-        });
     </script>
 
 @endpush

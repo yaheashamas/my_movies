@@ -39,6 +39,11 @@
             <li><a class="app-menu__item {{ request()->is('*movies*') ? 'active' : '' }}" href="{{ route('admin.movies.index') }}"><i class="app-menu__icon fa fa-film"></i> <span class="app-menu__label">@lang('movies.movies')</span></a></li>
         @endif
 
+        {{--actors--}}
+        @if (auth()->user()->hasPermission('read_actors'))
+            <li><a class="app-menu__item {{ request()->is('*actors*') ? 'active' : '' }}" href="{{ route('admin.actors.index') }}"><i class="app-menu__icon fa fa-address-book-o"></i> <span class="app-menu__label">@lang('actors.actors')</span></a></li>
+        @endif
+
         {{--settings--}}
         @if (auth()->user()->hasPermission('read_settings'))
             <li class="treeview {{ request()->is('*settings*') ? 'is-expanded' : '' }}"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-cogs"></i><span class="app-menu__label">@lang('settings.settings')</span><i class="treeview-indicator fa fa-angle-right"></i></a>

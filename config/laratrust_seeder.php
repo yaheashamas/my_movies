@@ -18,6 +18,7 @@ return [
             'users' => 'c,r,u,d',
             'genres' => 'c,r,u,d',
             'movies' => 'c,r,u,d',
+            'actors' => 'c,r,u,d',
             'settings' => 'c,r,u,d',
         ],
         'admin' => [],
