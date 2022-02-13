@@ -44,7 +44,10 @@ class getGenres extends Command
                 'api_key' => config('services.tmdb.api_key')
             ]);
         foreach ($response->json()['genres'] as $genre){
-            Genre::create(['name' => $genre['name']]);
+            Genre::create([
+                'e_id' => $genre['id'],
+                'name' => $genre['name']
+            ]);
         }
     }//end of handle
 

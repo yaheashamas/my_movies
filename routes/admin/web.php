@@ -34,6 +34,11 @@ Route::middleware([
             Route::delete('/genres/bulk_delete', 'GenreController@bulkDelete')->name('genres.bulk_delete');
             Route::resource('genres', 'GenreController')->only(['index','destroy']);
 
+            //movies routes
+            Route::get('/movies/data', 'MovieController@data')->name('movies.data');
+            Route::delete('/movies/bulk_delete', 'MovieController@bulkDelete')->name('movies.bulk_delete');
+            Route::resource('movies', 'MovieController')->only(['index','destroy']);
+
             //setting routes
             Route::get('/settings/general', 'SettingController@general')->name('settings.general');
             Route::resource('settings', 'SettingController')->only(['store']);

@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Console\Commands\AfaqyUnits;
 use App\Console\Commands\CheckMaintenance;
 use App\Console\Commands\getGenres;
+use App\Console\Commands\getMovies;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -16,7 +17,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        getGenres::class
+        getGenres::class,
+        getMovies::class
     ];
 
     /**

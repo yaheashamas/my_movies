@@ -30,5 +30,5 @@ return [
     'bulk_delete' => 'Bulk delete',
     'loading' => 'Loading ...',
     'show' => 'Show',
-    
+    'all' => 'All',
 ];
