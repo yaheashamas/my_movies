@@ -54,12 +54,26 @@
 
                     {{--search actors--}}
                     <div class="col-md-6">
-                        <select class="form-select" id="actor" aria-label="Default select example" >
-                            <option value="">@lang('site.all') @lang('actors.actors')</option>
-                            @foreach($actors as $actor)
-                                <option value="{{$actor->id}}" {{ request()->actor_id == $actor->id ? "selected" : ""}}>{{$actor->name}}</option>
-                            @endforeach
-                        </select>
+                        <div class="form-select">
+                            <select class="form-control select2"  id="actor" aria-label="Default select example" >
+                                <option value="">@lang('site.all') @lang('actors.actors')</option>
+                                @if($actor)
+                                    <option value="{{$actor->id}}" {{ request()->actor_id == $actor->id ? "selected" : ""}}>{{$actor->name}}</option>
+                                @endif
+                            </select>
+                        </div>
+                    </div>
+
+                    {{--select type--}}
+                    <div class="col-md-6">
+                        <div class="form-select">
+                            <select class="form-control select2"  id="type" aria-label="Default select example" >
+                                <option value="">@lang('site.all') @lang('movies.movies')</option>
+                                @foreach(['upcoming','now_playing'] as $type)
+                                    <option value="{{$type}}" {{ request()->type == $type ? "selected" : ""}}>{{$type}}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
 
                 </div><!-- end of row -->
@@ -110,6 +124,7 @@
     <script>
         let genre = "{{ request()->genre_id }}";
         let actor = "{{request()->actor_id}}";
+        let type;
 
         let moviesTable = $('#movies-table').DataTable({
             dom: "tiplr",
@@ -123,6 +138,7 @@
                 data: function (d){
                     d.genre_id = genre;
                     d.actor_id = actor;
+                    d.type = type;
                 }
             },
             columns: [
@@ -142,15 +158,16 @@
                 $('#bulk-delete').attr('disabled', true);
             }
         });
-        //select type genre
-        $('#genre').on('change',function(){
-            genre = this.value;
-            moviesTable.ajax.reload();
-        })
 
         //search
         $('#data-table-search').keyup(function () {
             moviesTable.search(this.value).draw();
+        })
+
+        //select type genre
+        $('#genre').on('change',function(){
+            genre = this.value;
+            moviesTable.ajax.reload();
         })
 
         //search about actors
@@ -175,6 +192,12 @@
                 }
             }
         });
+
+        //search about type
+        $('#type').on('change',function(){
+            type = this.value;
+            moviesTable.ajax.reload();
+        })
     </script>
 
 @endpush

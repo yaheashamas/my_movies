@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Actor;
 use App\Models\Genre;
+use App\Models\Image;
 use App\Models\Movie;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
@@ -43,37 +44,77 @@ class getMovies extends Command
     public function handle()
     {
         $this->getPopularMovies();
+        $this->getNowPlayingMovies();
+        $this->getupcomingMovies();
     }
 
     private function getPopularMovies(){
 
         for ($i = 1 ; $i <= config('services.tmdb.max_pages') ; $i++){
             $response = Http::get(config('services.tmdb.base_url').'movie/popular?region=us&api_key='.config('services.tmdb.api_key').'&page='.$i);
-
             foreach ($response->json()['results'] as $result){
 
-                $movie = Movie::updateOrCreate(
-                    [
-                        'e_id' => $result['id'],
-                        'title' => $result['title']
-                    ],
-                    [
-                        'description' => $result['overview'],
-                        'poster' => $result['poster_path'],
-                        'banner' => $result['backdrop_path'],
-                        'release_date' => $result['release_date'],
-                        'vote' => $result['vote_average'],
-                        'vote_count' => $result['vote_count']
-                    ]);
-
+                $movie = $this->createMovies($result);
                 $this->attachGenre($result,$movie);
                 $this->attachActores($movie);
+                $this->getImages($movie);
 
             }//end of foreach movies
 
         }//end of loop
 
     }//end of getPopularMovies
+
+    private function getNowPlayingMovies(){
+
+        for ($i = 1 ; $i <= config('services.tmdb.max_pages') ; $i++){
+            $response = Http::get(config('services.tmdb.base_url').'movie/popular?region=us&api_key='.config('services.tmdb.api_key').'&page='.$i);
+            foreach ($response->json()['results'] as $result){
+
+                $movie = $this->createMovies($result,$type = 'now_playing');
+                $this->attachGenre($result,$movie);
+                $this->attachActores($movie);
+                $this->getImages($movie);
+
+            }//end of foreach movies
+
+        }//end of loop
+
+    }//end of nowPlayingMovies
+
+    private function getupcomingMovies(){
+
+        for ($i = 1 ; $i <= config('services.tmdb.max_pages') ; $i++){
+            $response = Http::get(config('services.tmdb.base_url').'movie/popular?region=us&api_key='.config('services.tmdb.api_key').'&page='.$i);
+            foreach ($response->json()['results'] as $result){
+
+                $movie = $this->createMovies($result,$type = 'upcoming');
+                $this->attachGenre($result,$movie);
+                $this->attachActores($movie);
+                $this->getImages($movie);
+
+            }//end of foreach movies
+
+        }//end of loop
+
+    }//end of upcomingMovies
+
+    private function createMovies($result,$type = null){
+        return Movie::updateOrCreate(
+            [
+                'e_id' => $result['id'],
+                'title' => $result['title'],
+            ],
+            [
+                'description' => $result['overview'],
+                'type' => $type,
+                'poster' => $result['poster_path'],
+                'banner' => $result['backdrop_path'],
+                'release_date' => $result['release_date'],
+                'vote' => $result['vote_average'],
+                'vote_count' => $result['vote_count']
+            ]);
+    }//end of createMovies
 
     private function attachGenre($result,$movie){
 
@@ -83,9 +124,9 @@ class getMovies extends Command
 
         }//end of foreach genres
 
-    }//get or attachGenres
+    }//end of attachGenres
 
-    protected function attachActores($movie){
+    private function attachActores($movie){
 
         $response = Http::get(config('services.tmdb.base_url').'movie/'.$movie->e_id.'/credits?api_key='.config('services.tmdb.api_key'));
 
@@ -110,5 +151,25 @@ class getMovies extends Command
         }//end of foreach
 
     }//end of getActors
+
+    private function getImages($movie){
+
+        $response = Http::get(config('services.tmdb.base_url').'movie/'.$movie->e_id.'/images?api_key='.config('services.tmdb.api_key'));
+
+        //delete all data
+        $movie->images()->delete();
+
+        foreach ($response->json()['backdrops'] as $index => $img){
+
+            //break loop
+            if ($index == 12) break;
+
+            $image = new Image;
+            $image->path = $img['file_path'];
+
+            $movie->images()->save($image);
+
+        }//end of foreach
+    }//end of getImages
 
 }//end of get:movies

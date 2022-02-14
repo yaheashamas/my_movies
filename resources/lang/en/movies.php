@@ -6,4 +6,5 @@ return [
     'image' => 'Image',
     'vote' => 'Vote',
     'vote_count' => 'Vote Count',
+    'type' => 'Type',
 ];

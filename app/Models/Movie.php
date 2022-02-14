@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Movie extends Model
 {
     use HasFactory;
-    protected $fillable = ['e_id','title','description','poster','banner','release_date','vote','vote_count'];
+    protected $fillable = ['e_id','title','description','poster','banner','release_date','vote','vote_count','type'];
 
     protected $appends = ['poster_path','banner_path'];
 
@@ -38,7 +38,13 @@ class Movie extends Model
         });
     }
 
-    //relation ship
+    public function scopeWhenType($query,$type){
+        return $query->when($type,function ($q) use ($type){
+            return $q->where('type',$type);
+        });
+    }
+
+    //relation
     public function genres(){
         return $this->belongsToMany(Genre::class,'genre_movie');
     }
@@ -46,4 +52,9 @@ class Movie extends Model
     public function actors(){
         return $this->belongsToMany(Actor::class,'actor_movie');
     }
+
+    public function images(){
+        return $this->morphMany(Image::class,'imageable');
+    }
+
 }

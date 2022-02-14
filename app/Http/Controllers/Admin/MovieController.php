@@ -23,16 +23,21 @@ class MovieController extends Controller
     public function index()
     {
         $genres = Genre::all();
-        $actors = Actor::limit(10)->get();
-        return view('admin.movies.index',compact('genres','actors'));
+        $actor = null;
+        if (request()->actor_id)
+            $actor =Actor::find(request()->actor_id);
+        return view('admin.movies.index',compact('genres','actor'));
 
     }// end of index
 
     public function data()
     {
 
-        $movies = Movie::WhenGenreId(request()->genre_id)
-            ->WhenActorId(request()->actor_id)->with(['genres']);
+        $movies = Movie::
+            WhenGenreId(request()->genre_id)
+            ->WhenActorId(request()->actor_id)
+            ->WhenType(request()->type)
+            ->with(['genres']);
 
         return DataTables::of($movies)
             ->addColumn('record_select', 'admin.movies.data_table.record_select')
