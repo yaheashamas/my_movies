@@ -54,6 +54,9 @@
     <script type="text/javascript" src="{{ asset('admin_assets/plugins/jquery.dataTables/jquery.dataTables.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('admin_assets/plugins/dataTables.bootstrap/dataTables.bootstrap.min.js') }}"></script>
 
+    {{--Magnific-Popup--}}
+    <link rel="stylesheet" href="{{asset('admin_assets/plugins/magnific-popup/magnific-popup.css')}}">
+
     {{--<script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>--}}
     {{--<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>--}}
     {{--<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>--}}
@@ -62,6 +65,38 @@
     <script src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
 
     <link rel="stylesheet" href="{{ asset('admin_assets/css/custom.css')}}">
+
+    {{--loading style--}}
+    <style>
+        .loader {
+            -webkit-animation: spin 2s linear infinite; /* Safari */
+            animation: spin 2s linear infinite;
+        }
+        .loader-sm{
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid #11998e;
+            width: 40px;
+            height: 40px;
+        }
+        .loader-md{
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #11998e;
+            width: 80px;
+            height: 80px;
+        }
+        /* Safari */
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 
 </head>
 
@@ -112,6 +147,12 @@
 {{--custom--}}
 <script src="{{ asset('admin_assets/js/custom/index.js') }}"></script>
 <script src="{{ asset('admin_assets/js/custom/roles.js') }}"></script>
+
+{{--apex chart--}}
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+{{--Magnific-Popup--}}
+<script src="{{asset('admin_assets/plugins/magnific-popup/jquery.magnific-popup.min.js')}}"></script>
 
 <script>
     $(document).ready(function () {
@@ -181,13 +222,12 @@
     CKEDITOR.config.language = "{{ app()->getLocale() }}";
 
     //select 2
-    $('select').select2({
+    $('select2').select2({
         'width': '100%',
     });
 
 </script>
 
 @stack('scripts')
-
 </body>
 </html>

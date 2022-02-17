@@ -32,9 +32,8 @@ class MovieController extends Controller
 
     public function data()
     {
-
-        $movies = Movie::
-            WhenGenreId(request()->genre_id)
+        $movies = Movie::WhenMovieId(request()->movie_id)
+            ->WhenGenreId(request()->genre_id)
             ->WhenActorId(request()->actor_id)
             ->WhenType(request()->type)
             ->with(['genres']);
@@ -53,6 +52,11 @@ class MovieController extends Controller
             ->toJson();
 
     }// end of data
+
+    public function show(Movie $movie){
+        $movie->load(['genres','actors','images']);
+        return view('admin.movies.show',compact('movie'));
+    }
 
     public function destroy(Movie $movie)
     {

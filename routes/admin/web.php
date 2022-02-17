@@ -13,6 +13,8 @@ Route::middleware([
 
             //home
             Route::get('/home', 'HomeController@index')->name('home');
+            Route::get('/topStatistic', 'HomeController@topStatistic')->name('home.topStatistic');
+            Route::get('/moviesChart', 'HomeController@moviesChart')->name('home.moviesChart');
 
             //role routes
             Route::get('/roles/data', 'RoleController@data')->name('roles.data');
@@ -37,7 +39,7 @@ Route::middleware([
             //movies routes
             Route::get('/movies/data', 'MovieController@data')->name('movies.data');
             Route::delete('/movies/bulk_delete', 'MovieController@bulkDelete')->name('movies.bulk_delete');
-            Route::resource('movies', 'MovieController')->only(['index','destroy']);
+            Route::resource('movies', 'MovieController')->only(['index','destroy','show']);
 
             //actors routes
             Route::get('/actors/data', 'ActorController@data')->name('actors.data');

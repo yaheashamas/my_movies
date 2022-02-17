@@ -38,6 +38,12 @@ class Movie extends Model
         });
     }
 
+    public function scopeWhenMovieId($query,$movieId){
+        return $query->when($movieId,function ($q) use ($movieId){
+            return $q->where('e_id',$movieId);
+        });
+    }
+
     public function scopeWhenType($query,$type){
         return $query->when($type,function ($q) use ($type){
             return $q->where('type',$type);

@@ -124,6 +124,7 @@
     <script>
         let genre = "{{ request()->genre_id }}";
         let actor = "{{request()->actor_id}}";
+        let movie = "{{request()->movie_id}}";
         let type;
 
         let moviesTable = $('#movies-table').DataTable({
@@ -138,6 +139,7 @@
                 data: function (d){
                     d.genre_id = genre;
                     d.actor_id = actor;
+                    d.movie_id = movie;
                     d.type = type;
                 }
             },

@@ -54,7 +54,21 @@ class getMovies extends Command
             $response = Http::get(config('services.tmdb.base_url').'movie/popular?region=us&api_key='.config('services.tmdb.api_key').'&page='.$i);
             foreach ($response->json()['results'] as $result){
 
-                $movie = $this->createMovies($result);
+                $movie = Movie::updateOrCreate(
+                    [
+                        'e_id' => $result['id'],
+                        'title' => $result['title'],
+                    ],
+                    [
+                        'type' => null,
+                        'description' => $result['overview'],
+                        'poster' => $result['poster_path'],
+                        'banner' => $result['backdrop_path'],
+                        'release_date' => $result['release_date'],
+                        'vote' => $result['vote_average'],
+                        'vote_count' => $result['vote_count']
+                    ]
+                );
                 $this->attachGenre($result,$movie);
                 $this->attachActores($movie);
                 $this->getImages($movie);
@@ -68,10 +82,25 @@ class getMovies extends Command
     private function getNowPlayingMovies(){
 
         for ($i = 1 ; $i <= config('services.tmdb.max_pages') ; $i++){
-            $response = Http::get(config('services.tmdb.base_url').'movie/popular?region=us&api_key='.config('services.tmdb.api_key').'&page='.$i);
+            $response = Http::get(config('services.tmdb.base_url').'movie/now_playing?region=us&api_key='.config('services.tmdb.api_key').'&page='.$i);
             foreach ($response->json()['results'] as $result){
 
-                $movie = $this->createMovies($result,$type = 'now_playing');
+                $movie =  $movie = Movie::updateOrCreate(
+                    [
+                        'e_id' => $result['id'],
+                        'title' => $result['title'],
+                    ],
+                    [
+                        'type' => 'now_playing',
+                        'description' => $result['overview'],
+                        'poster' => $result['poster_path'],
+                        'banner' => $result['backdrop_path'],
+                        'release_date' => $result['release_date'],
+                        'vote' => $result['vote_average'],
+                        'vote_count' => $result['vote_count']
+                    ]
+                );
+
                 $this->attachGenre($result,$movie);
                 $this->attachActores($movie);
                 $this->getImages($movie);
@@ -85,10 +114,24 @@ class getMovies extends Command
     private function getupcomingMovies(){
 
         for ($i = 1 ; $i <= config('services.tmdb.max_pages') ; $i++){
-            $response = Http::get(config('services.tmdb.base_url').'movie/popular?region=us&api_key='.config('services.tmdb.api_key').'&page='.$i);
+            $response = Http::get(config('services.tmdb.base_url').'movie/upcoming?region=us&api_key='.config('services.tmdb.api_key').'&page='.$i);
             foreach ($response->json()['results'] as $result){
 
-                $movie = $this->createMovies($result,$type = 'upcoming');
+                $movie = $movie = Movie::updateOrCreate(
+                    [
+                        'e_id' => $result['id'],
+                        'title' => $result['title'],
+                    ],
+                    [
+                        'type' => 'upcoming',
+                        'description' => $result['overview'],
+                        'poster' => $result['poster_path'],
+                        'banner' => $result['backdrop_path'],
+                        'release_date' => $result['release_date'],
+                        'vote' => $result['vote_average'],
+                        'vote_count' => $result['vote_count']
+                    ]
+                );
                 $this->attachGenre($result,$movie);
                 $this->attachActores($movie);
                 $this->getImages($movie);
@@ -98,23 +141,6 @@ class getMovies extends Command
         }//end of loop
 
     }//end of upcomingMovies
-
-    private function createMovies($result,$type = null){
-        return Movie::updateOrCreate(
-            [
-                'e_id' => $result['id'],
-                'title' => $result['title'],
-            ],
-            [
-                'description' => $result['overview'],
-                'type' => $type,
-                'poster' => $result['poster_path'],
-                'banner' => $result['backdrop_path'],
-                'release_date' => $result['release_date'],
-                'vote' => $result['vote_average'],
-                'vote_count' => $result['vote_count']
-            ]);
-    }//end of createMovies
 
     private function attachGenre($result,$movie){
 
