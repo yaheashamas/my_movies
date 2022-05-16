@@ -25,7 +25,7 @@ class MovieController extends Controller
         $genres = Genre::all();
         $actor = null;
         if (request()->actor_id)
-            $actor =Actor::find(request()->actor_id);
+            $actor = Actor::find(request()->actor_id);
         return view('admin.movies.index',compact('genres','actor'));
 
     }// end of index
@@ -36,7 +36,8 @@ class MovieController extends Controller
             ->WhenGenreId(request()->genre_id)
             ->WhenActorId(request()->actor_id)
             ->WhenType(request()->type)
-            ->with(['genres']);
+            ->with(['genres'])
+            ->withCount(['favoriteByUsers']);
 
         return DataTables::of($movies)
             ->addColumn('record_select', 'admin.movies.data_table.record_select')

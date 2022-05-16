@@ -100,6 +100,7 @@
                                     <th>@lang('movies.genres')</th>
                                     <th>@lang('movies.vote')</th>
                                     <th>@lang('movies.vote_count')</th>
+                                    <th>@lang('movies.favoriteBy')</th>
                                     <th>@lang('site.action')</th>
                                 </tr>
                                 </thead>
@@ -150,9 +151,10 @@
                 {data: 'genres', name: 'genres',searchable: false,sortable: false},
                 {data: 'vote', name: 'vote',searchable: false,},
                 {data: 'vote_count', name: 'vote_count',searchable: false,sortable: false},
+                {data: 'favorite_by_users_count', name: 'favorite_by_users_count',searchable: false},
                 {data: 'actions', name: 'actions', searchable: false, sortable: false},
             ],
-            order: [[2, 'desc']],
+            order: [[4, 'desc']],
             drawCallback: function (settings) {
                 $('.record__select').prop('checked', false);
                 $('#record__select-all').prop('checked', false);

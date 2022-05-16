@@ -7,4 +7,5 @@ return [
     'genres' => 'الانواع',
     'vote' => 'التقيم',
     'vote_count' => 'عدد التقيم',
+    'favoriteBy' => 'المفضلة'
 ];

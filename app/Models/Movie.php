@@ -46,7 +46,15 @@ class Movie extends Model
 
     public function scopeWhenType($query,$type){
         return $query->when($type,function ($q) use ($type){
+            if ($type === 'popular')
+                return $q->where('type', null);
             return $q->where('type',$type);
+        });
+    }
+
+    public function scopeWhenSearch($query,$search){
+        return $query->when($search,function ($q) use ($search){
+            return $q->where('title','like','%'.$search.'%');
         });
     }
 
@@ -63,4 +71,7 @@ class Movie extends Model
         return $this->morphMany(Image::class,'imageable');
     }
 
+    public function favoriteByUsers(){
+        return $this->belongsToMany(User::class,'user_favorite_movie');
+    }
 }

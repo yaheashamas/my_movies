@@ -57,6 +57,10 @@ class User extends Authenticatable
 
     //rel
 
+    public function favoriteByMovies(){
+        return $this->belongsToMany(Movie::class,'user_favorite_movie');
+    }
+
     //fun
 
     public function hasImage()

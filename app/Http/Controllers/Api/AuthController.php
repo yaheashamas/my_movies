@@ -54,6 +54,7 @@ class AuthController extends Controller
 
         $request->merge([
             'password' => bcrypt($request->password),
+            'type' => 'user'
         ]);
 
         $user = User::create($request->all());
@@ -72,5 +73,5 @@ class AuthController extends Controller
         return response()->api($data);
 
     }// end of user
-    
+
 }//end of controller

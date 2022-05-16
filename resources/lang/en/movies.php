@@ -14,5 +14,6 @@ return [
     'popular' => 'Popular',
     'top' => 'Top',
     'now_playing' => 'Now Playing',
-    'upComingMovies' => 'UpComing Movies'
+    'upComingMovies' => 'UpComing Movies',
+    'favoriteBy' => 'Favorite By'
 ];
